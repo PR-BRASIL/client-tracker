@@ -4,6 +4,7 @@ import { ticketsLogEvent } from "../presentation/event/tickets-log";
 import { newPlayerProfileLogEvent } from "../presentation/event/new-player-profile-log";
 import { config } from "dotenv";
 import { logger } from "../utils/logger";
+import { banLogEvent } from "../presentation/event/ban-log";
 config();
 
 const adminLog = "../../admin/logs/ra_adminlog.txt";
@@ -20,6 +21,6 @@ watcherNewPlayerProfileLog.on("change", newPlayerProfileLogEvent);
 
 const banLog = "../../mods/pr/settings/banlist_info.log";
 const watcherBanLog = chokidar.watch(banLog);
-watcherBanLog.on("change", newPlayerProfileLogEvent);
+watcherBanLog.on("change", banLogEvent);
 
 logger.info("Client has been started!");
