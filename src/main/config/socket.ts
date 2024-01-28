@@ -1,3 +1,4 @@
 import { io } from "socket.io-client";
+import { env } from "./env";
 
-export const socket = io("sua_url_da_api_sockets");
+export const socket = io(env.apiUrl);
