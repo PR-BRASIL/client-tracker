@@ -6,27 +6,52 @@ import { makeRaAdminLogEvent } from "./factories/ra-admin-log-event";
 import { makeNewPlayerProfileEvent } from "./factories/new-player-profile-log-event";
 import { makeBanLogEvent } from "./factories/ban-log-event";
 import { makeChatLogEvent } from "./factories/chat-log-event";
+import fs from "fs";
+import { makeGameLogEvent } from "./factories/game-log-event";
 config();
 
-const adminLog = "../../admin/logs/ra_adminlog.txt";
-const watcherAminLog = chokidar.watch(adminLog);
+const adminLogPath = "../../admin/logs/ra_adminlog.txt";
+const watcherAminLog = chokidar.watch(adminLogPath);
 watcherAminLog.on("change", (path) => makeRaAdminLogEvent().handle(path));
 
-const ticketsLog = "../../admin/logs/tickets.log";
-const watcherTicketsLog = chokidar.watch(ticketsLog);
+const ticketsLogPath = "../../admin/logs/tickets.log";
+const watcherTicketsLog = chokidar.watch(ticketsLogPath);
 watcherTicketsLog.on("change", (path) => makeTicketLogEvent().handle(path));
 
-const newPlayerProfileLog = "../../admin/logs/playerprofiles.log";
-const watcherNewPlayerProfileLog = chokidar.watch(newPlayerProfileLog);
+const newPlayerProfileLogPath = "../../admin/logs/playerprofiles.log";
+const watcherNewPlayerProfileLog = chokidar.watch(newPlayerProfileLogPath);
 watcherNewPlayerProfileLog.on("change", (path) =>
   makeNewPlayerProfileEvent().handle(path)
 );
 
-const banLog = "../../mods/pr/settings/banlist_info.log";
-const watcherBanLog = chokidar.watch(banLog);
+const banLogPath = "../../mods/pr/settings/banlist_info.log";
+const watcherBanLog = chokidar.watch(banLogPath);
 watcherBanLog.on("change", (path) => makeBanLogEvent().handle(path));
 
-const watcher = chokidar.watch("../../admin/logs/");
-watcher.on("change", (path) => makeChatLogEvent().handle(path));
+const chatLogPath = "../../admin/logs/";
+const watcherChatLog = chokidar.watch(chatLogPath);
+watcherChatLog.on("change", (path) => makeChatLogEvent().handle(path));
+
+const gameLogPath = "../../json";
+const watcherGameLog = chokidar.watch(gameLogPath, {
+  persistent: true,
+});
+const processedFiles: Set<string> = new Set();
+
+fs.readdir(gameLogPath, (err, files) => {
+  if (err) {
+    logger.error("Erro ao ler o diretório:", err);
+    return;
+  }
+
+  files.forEach((file) => {
+    processedFiles.add(`../../json/${file}`);
+  });
+});
+
+watcherGameLog.on("add", async (path) => {
+  if (processedFiles.has(path)) return;
+  await makeGameLogEvent().handle(path);
+});
 
 logger.info("Client has been started!");
