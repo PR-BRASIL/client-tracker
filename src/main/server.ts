@@ -1,15 +1,15 @@
 import chokidar from "chokidar";
-import { raAdminLogEvent } from "../presentation/event/ra-admin-log";
 import { newPlayerProfileLogEvent } from "../presentation/event/new-player-profile-log";
 import { config } from "dotenv";
 import { logger } from "../utils/logger";
 import { banLogEvent } from "../presentation/event/ban-log";
 import { makeTicketLogEvent } from "./factories/ticket-log-event";
+import { makeRaAdminLogEvent } from "./factories/ra-admin-log-event";
 config();
 
 const adminLog = "../../admin/logs/ra_adminlog.txt";
 const watcherAminLog = chokidar.watch(adminLog);
-watcherAminLog.on("change", raAdminLogEvent);
+watcherAminLog.on("change", makeRaAdminLogEvent().handle);
 
 const ticketsLog = "../../admin/logs/tickets.log";
 const watcherTicketsLog = chokidar.watch(ticketsLog);
