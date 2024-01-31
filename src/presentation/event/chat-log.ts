@@ -11,12 +11,12 @@ export class ChatLogEvent implements Event {
     const lastLine = (await readLastLines.read(path, MAX_LINE)).trim();
 
     if (this.isKillLog(lastLine)) {
-      socket.emit("kill");
+      socket.emit("kill", lastLine);
       return;
     }
 
     if (this.isTeamKillLog(lastLine)) {
-      socket.emit("teamKill");
+      socket.emit("teamKill", lastLine);
       return;
     }
 
