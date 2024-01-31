@@ -9,15 +9,37 @@ export class ChatLogEvent implements Event {
 
     const MAX_LINE = 1;
     const lastLine = (await readLastLines.read(path, MAX_LINE)).trim();
-    const killText = " KILL]";
-    const isKillLog = lastLine.includes(killText);
 
-    if (isKillLog) {
-      logger.info("Kill log executed");
+    if (this.isKillLog(lastLine)) {
       socket.emit("kill");
       return;
     }
 
+    if (this.isTeamKillLog(lastLine)) {
+      socket.emit("teamKill");
+      return;
+    }
+
     socket.emit("chatLog", lastLine);
+  }
+
+  public isKillLog(message: string): boolean {
+    const killText = " KILL]";
+    const isKillLog = message.includes(killText);
+
+    if (!isKillLog) return false;
+
+    logger.debug("Kill log executed");
+    return true;
+  }
+
+  public isTeamKillLog(message: string): boolean {
+    const teamKillText = "TEAMKILL";
+    const isTeamKillLog = message.includes(teamKillText);
+
+    if (!isTeamKillLog) return false;
+
+    logger.debug("Team kill log executed");
+    return true;
   }
 }
