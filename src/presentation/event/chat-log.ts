@@ -20,6 +20,11 @@ export class ChatLogEvent implements Event {
       return;
     }
 
+    if (this.isConnectionLog(lastLine)) {
+      socket.emit("connectionLog", lastLine);
+      return;
+    }
+
     socket.emit("chatLog", lastLine);
   }
 
@@ -40,6 +45,18 @@ export class ChatLogEvent implements Event {
     if (!isTeamKillLog) return false;
 
     logger.debug("Team kill log executed");
+    return true;
+  }
+
+  public isConnectionLog(message: string): boolean {
+    const connectText = "CONNECT";
+    const disconnectText = "DISCONNECT";
+    const isConnectionLog =
+      message.includes(connectText) || message.includes(disconnectText);
+
+    if (!isConnectionLog) return false;
+
+    logger.debug("Connection log executed");
     return true;
   }
 }
