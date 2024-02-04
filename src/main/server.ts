@@ -8,6 +8,7 @@ import { makeBanLogEvent } from "./factories/ban-log-event";
 import { makeChatLogEvent } from "./factories/chat-log-event";
 import fs from "fs";
 import { makeGameLogEvent } from "./factories/game-log-event";
+import { makeGameStateEvent } from "./factories/game-state-event";
 config();
 
 const adminLogPath = "../../admin/logs/ra_adminlog.txt";
@@ -51,7 +52,12 @@ fs.readdir(gameLogPath, (err, files) => {
 
 watcherGameLog.on("add", async (path) => {
   if (processedFiles.has(path)) return;
+
   await makeGameLogEvent().handle(path);
 });
+
+// eslint-disable-next-line @typescript-eslint/no-magic-numbers
+const ONE_MINUTE = 60 * 1000;
+setInterval(makeGameStateEvent().handle, ONE_MINUTE);
 
 logger.info("Client has been started!");
