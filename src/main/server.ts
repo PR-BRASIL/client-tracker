@@ -9,31 +9,29 @@ import { makeChatLogEvent } from "./factories/chat-log-event";
 import fs from "fs";
 import { makeGameLogEvent } from "./factories/game-log-event";
 import { makeGameStateEvent } from "./factories/game-state-event";
+import { env } from "./config/env";
 config();
 
-const adminLogPath = "../../admin/logs/ra_adminlog.txt";
+const adminLogPath = env.adminLogPath;
 const watcherAminLog = chokidar.watch(adminLogPath);
 watcherAminLog.on("change", (path) => makeRaAdminLogEvent().handle(path));
 
-const ticketsLogPath = "../../admin/logs/tickets.log";
+const ticketsLogPath = env.ticketsLogPath;
 const watcherTicketsLog = chokidar.watch(ticketsLogPath);
 watcherTicketsLog.on("change", (path) => makeTicketLogEvent().handle(path));
 
-const newPlayerProfileLogPath = "../../admin/logs/playerprofiles.log";
-const watcherNewPlayerProfileLog = chokidar.watch(newPlayerProfileLogPath);
+const watcherNewPlayerProfileLog = chokidar.watch(env.newPlayerProfilePath);
 watcherNewPlayerProfileLog.on("change", (path) =>
   makeNewPlayerProfileEvent().handle(path)
 );
 
-const banLogPath = "../../mods/pr/settings/banlist_info.log";
-const watcherBanLog = chokidar.watch(banLogPath);
+const watcherBanLog = chokidar.watch(env.banLogPath);
 watcherBanLog.on("change", (path) => makeBanLogEvent().handle(path));
 
-const chatLogPath = "../../admin/logs/";
-const watcherChatLog = chokidar.watch(chatLogPath);
+const watcherChatLog = chokidar.watch(env.chatLogPath);
 watcherChatLog.on("change", (path) => makeChatLogEvent().handle(path));
 
-const gameLogPath = "../../json";
+const gameLogPath = env.gameLogPath;
 const watcherGameLog = chokidar.watch(gameLogPath, {
   persistent: true,
 });
@@ -46,7 +44,7 @@ fs.readdir(gameLogPath, (err, files) => {
   }
 
   files.forEach((file) => {
-    processedFiles.add(`../../json/${file}`);
+    processedFiles.add(`${gameLogPath}${file}`);
   });
 });
 
