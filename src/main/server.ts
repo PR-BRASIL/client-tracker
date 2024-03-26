@@ -1,3 +1,4 @@
+import type { WatchOptions } from "chokidar";
 import chokidar from "chokidar";
 import { config } from "dotenv";
 import { logger } from "../utils/logger";
@@ -12,28 +13,37 @@ import { makeGameStateEvent } from "./factories/game-state-event";
 import { env } from "./config/env";
 config();
 
+const chokidarOptions: WatchOptions = {
+  usePolling: true,
+  interval: 1000,
+};
+
 const adminLogPath = env.adminLogPath;
-const watcherAminLog = chokidar.watch(adminLogPath);
+const watcherAminLog = chokidar.watch(adminLogPath, chokidarOptions);
 watcherAminLog.on("change", (path) => makeRaAdminLogEvent().handle(path));
 
 const ticketsLogPath = env.ticketsLogPath;
-const watcherTicketsLog = chokidar.watch(ticketsLogPath);
+const watcherTicketsLog = chokidar.watch(ticketsLogPath, chokidarOptions);
 watcherTicketsLog.on("change", (path) => makeTicketLogEvent().handle(path));
 
-const watcherNewPlayerProfileLog = chokidar.watch(env.newPlayerProfilePath);
+const watcherNewPlayerProfileLog = chokidar.watch(
+  env.newPlayerProfilePath,
+  chokidarOptions
+);
 watcherNewPlayerProfileLog.on("change", (path) =>
   makeNewPlayerProfileEvent().handle(path)
 );
 
-const watcherBanLog = chokidar.watch(env.banLogPath);
+const watcherBanLog = chokidar.watch(env.banLogPath, chokidarOptions);
 watcherBanLog.on("change", (path) => makeBanLogEvent().handle(path));
 
-const watcherChatLog = chokidar.watch(env.chatLogPath);
+const watcherChatLog = chokidar.watch(env.chatLogPath, chokidarOptions);
 watcherChatLog.on("change", (path) => makeChatLogEvent().handle(path));
 
 const gameLogPath = env.gameLogPath;
 const watcherGameLog = chokidar.watch(gameLogPath, {
   persistent: true,
+  ...chokidarOptions,
 });
 const processedFiles: Set<string> = new Set();
 
