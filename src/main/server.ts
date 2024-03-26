@@ -15,7 +15,7 @@ config();
 
 const chokidarOptions: WatchOptions = {
   usePolling: true,
-  interval: 1000,
+  interval: 100,
 };
 
 const adminLogPath = env.adminLogPath;
