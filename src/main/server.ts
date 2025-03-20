@@ -78,6 +78,8 @@ fs.readdir(gameLogPath, (err, files) => {
   
     console.log("Arquivo pronto para ser processado:", path);
     if (processedFiles.has(path)) return;
+
+    console.log("processando arquivo", path);
   
     await makeGameLogEvent().handle(path);
   });
