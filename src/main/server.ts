@@ -61,28 +61,30 @@ fs.readdir(gameLogPath, (err, files) => {
     const fullFilePath = path.join(gameLogPath, file);  // Usando path.join para garantir o caminho correto
     processedFiles.add(fullFilePath);
   });
+
+  watcherGameLog.on("add", async (path) => {
+    let fileReady = false;
+  
+    // Por exemplo, verificando se o arquivo tem tamanho maior que 0 bytes
+    while (!fileReady) {
+      const stats = await fs.promises.stat(path);
+      if (stats.size > 0) {
+        fileReady = true;
+      } else {
+        // Se o arquivo ainda não estiver pronto, aguarde um pouco e tente novamente
+        await new Promise((resolve) => setTimeout(resolve, 500));  // Aguarda 500ms
+      }
+    }
+  
+    console.log("Arquivo pronto para ser processado:", path);
+    if (processedFiles.has(path)) return;
+  
+    await makeGameLogEvent().handle(path);
+  });
 });
 
 // Observando a adição de novos arquivos no log de jogos
-watcherGameLog.on("add", async (path) => {
-  let fileReady = false;
 
-  // Por exemplo, verificando se o arquivo tem tamanho maior que 0 bytes
-  while (!fileReady) {
-    const stats = await fs.promises.stat(path);
-    if (stats.size > 0) {
-      fileReady = true;
-    } else {
-      // Se o arquivo ainda não estiver pronto, aguarde um pouco e tente novamente
-      await new Promise((resolve) => setTimeout(resolve, 500));  // Aguarda 500ms
-    }
-  }
-
-  console.log("Arquivo pronto para ser processado:", path);
-  if (processedFiles.has(path)) return;
-
-  await makeGameLogEvent().handle(path);
-});
 
 // Definindo um intervalo para o evento de estado do jogo
 // eslint-disable-next-line @typescript-eslint/no-magic-numbers
