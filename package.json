@@ -16,7 +16,6 @@
     "test:ci": "yarn test -- --coverage"
   },
   "devDependencies": {
-    "@techmmunity/eslint-config": "^5.2.3",
     "@types/axios": "^0.14.0",
     "@types/bcrypt": "^5.0.0",
     "@types/chokidar": "^2.1.3",
