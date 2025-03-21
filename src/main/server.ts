@@ -50,6 +50,7 @@ const watcherGameLog = chokidar.watch(gameLogPath, {
 });
 
 watcherGameLog.on("add", async (path) => {
+  logger.info("Arquivo adicionado:", path);
   await makeGameLogEvent().handle(path);
 });
 
