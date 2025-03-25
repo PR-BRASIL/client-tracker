@@ -12,9 +12,8 @@ export class GameLogEvent implements Event {
       }
 
       const jsonData = JSON.parse(data);
-      console.log(jsonData);
 
-      socket.emit("gameLog", jsonData);
+      socket.emit("gameLog", { ...jsonData, path });
     });
   }
 }
