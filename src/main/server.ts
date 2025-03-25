@@ -50,8 +50,10 @@ const watcherGameLog = chokidar.watch(gameLogPath, {
 });
 
 watcherGameLog.on("add", async (path) => {
-  logger.info("Arquivo adicionado:", path);
-  await makeGameLogEvent().handle(path);
+  const pathSplit = path.split("/");
+  const fileName = pathSplit[pathSplit.length - 1];
+  logger.info("Arquivo adicionado:", fileName);
+  await makeGameLogEvent().handle(fileName);
 });
 
 logger.info("Client has been started!");
