@@ -15,7 +15,7 @@ export class GameLogEvent implements Event {
 
       const pathSplit = path.split("/");
       const fileName = pathSplit[pathSplit.length - 1];
-      socket.emit("gameLog", { ...jsonData, fileName });
+      socket.emit("gameLog", { ...jsonData, path: fileName });
     });
   }
 }
